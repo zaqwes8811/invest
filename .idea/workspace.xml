@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95e6cfca-979d-4ca1-ba49-1bcacfcd9653" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/invest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/invest.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/iss_simple_client.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/iss_simple_client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/python/iss_simple_main.py" beforeDir="false" afterPath="$PROJECT_DIR$/python/iss_simple_main.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/python/iss_simple_main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="49" />
+            <state relative-caret-position="574">
+              <caret line="76" column="60" selection-start-line="76" selection-start-column="60" selection-end-line="76" selection-end-column="60" />
               <folding>
                 <element signature="e#365#375#0" expanded="true" />
               </folding>
@@ -29,8 +28,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/python/iss_simple_client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="116" column="8" selection-start-line="116" selection-start-column="8" selection-end-line="116" selection-end-column="8" />
+            <state relative-caret-position="404">
+              <caret line="201" column="44" selection-start-line="201" selection-start-column="35" selection-end-line="201" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -54,6 +53,7 @@
         <option value="$PROJECT_DIR$/pdf_table_extract/__init__.py" />
         <option value="$PROJECT_DIR$/pdf_table_extract/src/pdftableextract/core.py" />
         <option value="$PROJECT_DIR$/finex_corr.py" />
+        <option value="$PROJECT_DIR$/python/iss_simple_client.py" />
         <option value="$PROJECT_DIR$/python/iss_simple_main.py" />
       </list>
     </option>
@@ -69,7 +69,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -104,6 +103,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -271,15 +271,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/python/iss_simple_client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="116" column="8" selection-start-line="116" selection-start-column="8" selection-end-line="116" selection-end-column="8" />
+        <state relative-caret-position="404">
+          <caret line="201" column="44" selection-start-line="201" selection-start-column="35" selection-end-line="201" selection-end-column="44" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/python/iss_simple_main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="49" lean-forward="true" selection-start-line="49" selection-end-line="49" />
+        <state relative-caret-position="574">
+          <caret line="76" column="60" selection-start-line="76" selection-start-column="60" selection-end-line="76" selection-end-column="60" />
           <folding>
             <element signature="e#365#375#0" expanded="true" />
           </folding>
