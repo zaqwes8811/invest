@@ -1,3 +1,4 @@
+# coding: utf-8
 #!/usr/bin/env python
 """
     Small example of interaction with Moscow Exchange ISS server.
@@ -15,6 +16,7 @@
 import sys
 
 from os.path import expanduser
+from datetime import datetime
 
 from iss_simple_client import Config
 from iss_simple_client import MicexAuth
@@ -22,7 +24,26 @@ from iss_simple_client import MicexISSClient
 from iss_simple_client import MicexISSDataHandler
 
 
-class MyData:
+class FinExEtfData:
+    """ Container that will be used by the handler to store data.
+    Kept separately from the handler for scalability purposes: in order
+    to differentiate storage and output from the processing.
+    """
+
+    def __init__(self):
+        self.history = []
+
+    def print_history(self):
+        print "=" * 49
+        print "|%15s|%15s|" % ("SECID", "CLOSE")
+        print "=" * 49
+        for sec in self.history:
+            if 'FX' in sec[0]:
+                print "|%15s|%15.2f|" % (sec[0], sec[1])
+        print "=" * 49
+
+
+class CandlesData:
     """ Container that will be used by the handler to store data.
     Kept separately from the handler for scalability purposes: in order
     to differentiate storage and output from the processing.
@@ -61,26 +82,31 @@ def main():
     password = password.strip()
     my_config = Config(user=user, password=password, proxy_url='')
     my_auth = MicexAuth(my_config)
-    if my_auth.is_real_time():
-        iss = MicexISSClient(my_config, my_auth, MyDataHandler, MyData)
-        # iss.get_history_securities(engine='stock',
-        #                            market='shares',
-        #                            board='tqtf',
-        #                            date='2020-02-12')
-        # iss.handler.data.print_history()
 
-        # from=2010-08-23&till=2010-08-24
-        iss.get_history_securities_by_range(engine='stock',
-                                            market='shares',
-                                            board='tqtf',
-                                            ticker='FXRU',
-                                            start_date='2019-01-12',
-                                            stop_date='2020-02-12',
-                                            )
+    # Q: точность до скольки знаков? 2-х достаточно
+    if my_auth.is_real_time():
+        iss = MicexISSClient(my_config, my_auth, MyDataHandler, FinExEtfData)
+        date = datetime.now().strftime("%Y-%m-%d")
+        iss.get_history_securities(engine='stock',
+                                   market='shares',
+                                   board='tqtf',
+                                   date=date)
         iss.handler.data.print_history()
 
-    # http://iss.moex.com/iss/history/engines/stock/markets/shares/boards/tqtf/securities.json?from=2018-08-08&till=2018-08-25&interval=24&start=0
-    # http://iss.moex.com/iss/history/engines/stock/markets/shares/boards/tqtf/securities/FXRU/candles.json?from=2018-08-08&till=2018-08-25&interval=24&start=0
+    if 0:
+        # http://iss.moex.com/iss/history/engines/stock/markets/shares/boards/tqtf/securities.json?from=2018-08-08&till=2018-08-25&interval=24&start=0
+        # http://iss.moex.com/iss/history/engines/stock/markets/shares/boards/tqtf/securities/FXRU/candles.json?from=2018-08-08&till=2018-08-25&interval=24&start=0
+        if my_auth.is_real_time():
+            iss = MicexISSClient(my_config, my_auth, MyDataHandler, CandlesData)
+            # from=2010-08-23&till=2010-08-24
+            iss.get_history_securities_by_range(engine='stock',
+                                                market='shares',
+                                                board='tqtf',
+                                                ticker='FXRU',
+                                                start_date='2019-01-12',
+                                                stop_date='2020-02-12',
+                                                )
+            iss.handler.data.print_history()
 
 
 if __name__ == '__main__':

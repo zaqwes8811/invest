@@ -131,6 +131,7 @@ class MicexISSClient:
         cnt = 1
         while cnt > 0:
             res = self.opener.open(url + '&start=' + str(start))
+            print(url)
             jres = json.load(res)
 
             # the following is also just a simple example
@@ -147,7 +148,8 @@ class MicexISSClient:
             # to get all the IDs together with data (leads to more traffic)
             jcols = jhist['columns']
             secIdx = jcols.index('SECID')
-            closeIdx = jcols.index('LEGALCLOSEPRICE')
+            # closeIdx = jcols.index('LEGALCLOSEPRICE')
+            closeIdx = jcols.index('CLOSE')
             tradesIdx = jcols.index('NUMTRADES')
 
             result = []
