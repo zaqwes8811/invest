@@ -19,6 +19,8 @@ from os.path import expanduser
 from datetime import datetime
 from datetime import timedelta
 
+import pandas as pd
+
 from iss_simple_client import Config
 from iss_simple_client import MicexAuth
 from iss_simple_client import MicexISSClient
@@ -59,7 +61,7 @@ class SingleETFReader(Auth):
     def get_column_names(self):
         return ("TRADEDATE", "SECID", "CLOSE", "TRADES")
 
-    def get_data(self, etf_name, end_date, days=365):
+    def get_data(self, etf_name, end_date, board, days=365):
         class CandlesData:
             """ Container that will be used by the handler to store data.
             Kept separately from the handler for scalability purposes: in order
@@ -79,19 +81,24 @@ class SingleETFReader(Auth):
 
         if self.my_auth.is_real_time():
             iss = MicexISSClient(self.my_config, self.my_auth, self.MyDataHandler, CandlesData)
-            # from=2010-08-23&till=2010-08-24
-
             end_date_str = end_date.strftime("%Y-%m-%d")
             start_date = (end_date - timedelta(days=days)).strftime("%Y-%m-%d")
 
             iss.get_history_securities_by_range(engine='stock',
                                                 market='shares',
-                                                board='tqtf',
+                                                board=board,
                                                 ticker=etf_name,
                                                 start_date=start_date,
                                                 stop_date=end_date_str,
                                                 )
-            return iss.handler.data.history
+
+            df = pd.DataFrame(iss.handler.data.history, columns=self.get_column_names())
+
+            df['TRADEDATE'] = df['TRADEDATE'].astype('datetime64[ns]')
+
+            df = df[['TRADEDATE', 'CLOSE']]
+
+            return df
         return []
 
 
@@ -99,7 +106,7 @@ class NowTQTF(Auth):
     def __init__(self):
         Auth.__init__(self)
 
-    def get_data(self):
+    def get_data(self, forced_date):
         class FinExEtfData:
             """ Container that will be used by the handler to store data.
             Kept separately from the handler for scalability purposes: in order
@@ -114,19 +121,92 @@ class NowTQTF(Auth):
                 print "|%15s|%15s|" % ("SECID", "CLOSE")
                 print "=" * 49
                 for sec in self.history:
-                    if 'FX' in sec[0]:
-                        print "|%15s|%15.2f|" % (sec[0], sec[1])
+                    # if 'FX' in sec[0]:
+                    print "|%15s|%15.2f|" % (sec[0], sec[1])
                 print "=" * 49
 
         # Q: точность до скольки знаков? 2-х достаточно
         if self.my_auth.is_real_time():
             iss = MicexISSClient(self.my_config, self.my_auth, self.MyDataHandler, FinExEtfData)
             date = datetime.now().strftime("%Y-%m-%d")
+            if forced_date:
+                date = forced_date
             iss.get_history_securities(engine='stock',
                                        market='shares',
                                        board='tqtf',
                                        date=date)
             iss.handler.data.print_history()
+
+
+class AllETFs(Auth):
+    def __init__(self):
+        Auth.__init__(self)
+        self.boards = ['tqtf'.upper(), 'tqtd'.upper()]
+
+    def get_names(self, tickets_filter=[], boards_filter=[]):
+        class FinExEtfData:
+            """ Container that will be used by the handler to store data.
+            Kept separately from the handler for scalability purposes: in order
+            to differentiate storage and output from the processing.
+            """
+
+            def __init__(self):
+                self.history = []
+                self.ticker_to_board = {}
+
+            def print_history(self):
+                print "=" * 49
+                print "|%15s|%15s|%15s" % ("SECID", "CLOSE", "BOARD")
+                print "=" * 49
+
+                ticker_to_board = {}
+
+                for sec in self.history:
+                    t = sec[0]
+                    b = sec[3]
+                    print "|%15s|%15.2f|%15s" % (sec[0], sec[1], sec[3])
+
+                    def read_add():
+                        if not t in ticker_to_board:
+                            ticker_to_board[t] = []
+                        ticker_to_board[t].append(b)
+
+                    good = False
+
+                    if tickets_filter or boards_filter:
+                        if tickets_filter and boards_filter:
+                            for f in tickets_filter:
+                                if f in t:
+                                    for b_ in boards_filter:
+                                        if b_ == b:
+                                            good = True
+
+                        elif tickets_filter:
+                            for f in tickets_filter:
+                                if f in t:
+                                    good = True
+                        elif boards_filter:
+                            for b_ in boards_filter:
+                                if b_ == b:
+                                    good = True
+                    else:
+                        good = True
+
+                    if good:
+                        read_add()
+                print "=" * 49
+                self.ticker_to_board = ticker_to_board
+
+        # Q: точность до скольки знаков? 2-х достаточно
+        if self.my_auth.is_real_time():
+            iss = MicexISSClient(self.my_config, self.my_auth, self.MyDataHandler, FinExEtfData)
+            for board in self.boards:
+                iss.get_all_by_board(engine='stock',
+                                     market='shares',
+                                     board=board)
+            iss.handler.data.print_history()
+
+            return iss.handler.data.ticker_to_board
 
 
 def main():
